@@ -10,3 +10,5 @@ You can redact your notices, search your notices, delete your notices. And also 
 
 Max size of notices is 300.
 Max length of notice name is 16, of notice text - 256.
+
+All changes to notes occur in real time.
