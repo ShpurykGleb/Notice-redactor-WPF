@@ -1,0 +1,255 @@
+﻿<Window x:Class="CSharpNoticeRedactorWPF.SearchNoticeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CSharpNoticeRedactorWPF"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Search notice" Height="934" Width="865" ResizeMode="CanMinimize">
+    <Window.Resources>
+        <Style TargetType="TextBox">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="Border" 
+						BorderBrush="{TemplateBinding BorderBrush}" 
+						BorderThickness="{TemplateBinding BorderThickness}" 
+						Background="{TemplateBinding Background}">
+                            <ScrollViewer x:Name="PART_ContentHost" 
+								  Focusable="false" 
+								  HorizontalScrollBarVisibility="Hidden" 
+								  VerticalScrollBarVisibility="Hidden">
+                            </ScrollViewer>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsFocused" Value="true">
+                                <Setter Property="BorderBrush" 
+								TargetName="Border" 
+								Value="#FFF800">
+                                </Setter>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="FocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="2" StrokeDashArray="1 2" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" SnapsToDevicePixels="true" StrokeThickness="1"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="Button.Static.Background" Color="#FFDDDDDD"/>
+        <SolidColorBrush x:Key="Button.Static.Border" Color="#FF707070"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Background" Color="#FFBEE6FD"/>
+        <SolidColorBrush x:Key="Button.MouseOver.Border" Color="#FF3C7FB1"/>
+        <SolidColorBrush x:Key="Button.Pressed.Background" Color="#FFC4E5F6"/>
+        <SolidColorBrush x:Key="Button.Pressed.Border" Color="#FF2C628B"/>
+        <SolidColorBrush x:Key="Button.Disabled.Background" Color="#FFF4F4F4"/>
+        <SolidColorBrush x:Key="Button.Disabled.Border" Color="#FFADB2B5"/>
+        <SolidColorBrush x:Key="Button.Disabled.Foreground" Color="#FF838383"/>
+        <Style x:Key="ButtonBackToMainWindowStyle" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource FocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource Button.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource Button.Static.Border}"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" CornerRadius="20" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" SnapsToDevicePixels="true">
+                            <ContentPresenter x:Name="contentPresenter" Focusable="False" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsDefaulted" Value="true">
+                                <Setter Property="BorderBrush" TargetName="border" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="#FFF800"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.MouseOver.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Pressed.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Pressed.Border}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="border" Value="{StaticResource Button.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="border" Value="{StaticResource Button.Disabled.Border}"/>
+                                <Setter Property="TextElement.Foreground" TargetName="contentPresenter" Value="{StaticResource Button.Disabled.Foreground}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RepeatButtonTransparent" TargetType="{x:Type RepeatButton}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+            <Setter Property="Background" Value="#505050"/>
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type RepeatButton}">
+                        <Border Background="{TemplateBinding Background}" Height="{TemplateBinding Height}" Width="{TemplateBinding Width}" CornerRadius="10"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="ScrollBarThumbVertical" TargetType="{x:Type Thumb}">
+            <Setter Property="OverridesDefaultStyle" Value="true"/>
+
+            <Setter Property="IsTabStop" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border x:Name="rectangle" Background="#FFD800" Height="{TemplateBinding Height}" SnapsToDevicePixels="True" Width="{TemplateBinding Width}" CornerRadius="8"/>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="rectangle" Value="#FFFF00"/>
+                            </Trigger>
+                            <Trigger Property="IsDragging" Value="true">
+                                <Setter Property="Background" TargetName="rectangle" Value="#FFFF00"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <SolidColorBrush x:Key="ListBox.Static.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ListBox.Static.Border" Color="#FFABADB3"/>
+        <SolidColorBrush x:Key="ListBox.Disabled.Background" Color="#FFFFFFFF"/>
+        <SolidColorBrush x:Key="ListBox.Disabled.Border" Color="#FFD9D9D9"/>
+
+        <Style x:Key="ListBoxWithNoticesStyle" TargetType="{x:Type ListBox}">
+            <Setter Property="Background" Value="{StaticResource ListBox.Static.Background}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ListBox.Static.Border}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListBox}">
+                        <Border x:Name="Bd" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="1" SnapsToDevicePixels="true">
+                            <ScrollViewer Focusable="false" Padding="{TemplateBinding Padding}">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </ScrollViewer>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Background}"/>
+                                <Setter Property="BorderBrush" TargetName="Bd" Value="{StaticResource ListBox.Disabled.Border}"/>
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsGrouping" Value="true"/>
+                                    <Condition Property="VirtualizingPanel.IsVirtualizingWhenGrouping" Value="false"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Grid x:Name="GridBackground" Background="Black" Margin="0,0,0,-6">
+        <Button Style="{DynamicResource ButtonBackToMainWindowStyle}"  x:Name="ButtonBackToMainWindow" Content="" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="94" Height="43" Background="#FFD800" FontFamily="Lucida Fax" FontSize="20" Click="ButtonBackToMainWindow_Click"/>
+        <Image x:Name="ImageReturnToMainWindow" HorizontalAlignment="Left" IsHitTestVisible="False" Height="38" Margin="38,12,0,0" VerticalAlignment="Top" Width="41" Source="/Images/ArrowReturnToMainWindow.png"/>
+        <Label x:Name="LabelFoundNotes" Content="Notes not found" HorizontalContentAlignment="Center" BorderBrush="#FFD800" BorderThickness="0 0 0 1" HorizontalAlignment="Left" Foreground="#FFD800" Margin="64,440,0,0" VerticalAlignment="Top" Width="184" FontFamily="Lucida Fax" FontSize="20" Background="Black"/>
+
+        <ListBox Style="{DynamicResource ListBoxWithNoticesStyle}" x:Name="ListBoxWithNotices" VirtualizingPanel.ScrollUnit="Pixel" Margin="10,494,563,159" SelectionChanged="ListBoxWithNotices_SelectionChanged" BorderThickness="0 0 0 0" Background="Black" Foreground="#FFD800" ItemsSource="{Binding Notices}" SelectedItem="{Binding SelectedNotice}">
+
+            <ListBox.Resources>
+                <Style TargetType="{x:Type ScrollBar}">
+                    <Setter Property="Background" Value="#505050"/>
+                    <Setter Property="BorderBrush" Value="#505050"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ScrollBar}">
+                                <Grid x:Name="Bg" SnapsToDevicePixels="true">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
+                                        <RowDefinition Height="0.00001*"/>
+                                        <RowDefinition MaxHeight="{DynamicResource {x:Static SystemParameters.VerticalScrollBarButtonHeightKey}}"/>
+                                    </Grid.RowDefinitions>
+                                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Row="1" CornerRadius="10"/>
+
+                                    <Track x:Name="PART_Track" IsDirectionReversed="true" IsEnabled="{TemplateBinding IsMouseOver}" Grid.Row="1">
+                                        <Track.DecreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static ScrollBar.PageUpCommand}" Style="{StaticResource RepeatButtonTransparent}" HorizontalAlignment="Left" Width="17"/>
+                                        </Track.DecreaseRepeatButton>
+                                        <Track.IncreaseRepeatButton>
+                                            <RepeatButton Command="{x:Static ScrollBar.PageDownCommand}" Style="{StaticResource RepeatButtonTransparent}"/>
+                                        </Track.IncreaseRepeatButton>
+                                        <Track.Thumb>
+                                            <Thumb Style="{StaticResource ScrollBarThumbVertical}" Margin="2"/>
+                                        </Track.Thumb>
+                                    </Track>
+                                </Grid>
+
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.Resources>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="5">
+                        <TextBox HorizontalAlignment="Left" MaxWidth="217" TextAlignment="Left" Text="{Binding Name}" IsReadOnly="True" IsHitTestVisible="False" Background="Transparent" BorderThickness="0 0 0 0" Foreground="#FFD800"/>
+                        <TextBox HorizontalAlignment="Left" MaxWidth="217" TextAlignment="Left" Text="{Binding CreationDate}" IsReadOnly="True" IsHitTestVisible="False" Background="Transparent" BorderThickness="0 0 0 0" Foreground="#FFD800"/>
+                        <TextBox HorizontalAlignment="Left" MaxWidth="217" TextAlignment="Left" Text="{Binding Text}" IsReadOnly="True" IsHitTestVisible="False" Background="Transparent" BorderThickness="0 0 0 0" Foreground="#FFD800"/>
+                    </StackPanel>
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
+
+        <Rectangle x:Name="RectangleBorder" HorizontalAlignment="Left" Height="387" Margin="342,494,0,0" Stroke="#FFD800" StrokeThickness="2" RadiusX="20" RadiusY="20" VerticalAlignment="Top"   Width="503"/>
+
+        <Label x:Name="LabelNoticeName" Content="Notice name :" Visibility="Hidden"  HorizontalContentAlignment="Center" BorderBrush="#FFD800" BorderThickness="0 0 0 0" HorizontalAlignment="Left" Foreground="#FFD800" Margin="356,512,0,0" VerticalAlignment="Top" Width="148" Background="Black" FontFamily="Lucida Fax" FontSize="20"/>
+
+        <TextBox x:Name="NoticeNameTextBox" DataContext="{Binding SelectedNotice}" Visibility="Hidden" TextChanged="NoticeNameTextBox_TextChanged"  MaxLength="16" Background="Black"  BorderThickness="0 0 0 1" Foreground="#FFF800" Margin="502,516,20,0" TextWrapping="Wrap" Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Height="26" FontFamily="Lucida Fax" FontSize="20"/>
+
+        <Label x:Name="LabelNoticeCreationTime" Content="Notice creation time :" Visibility="Hidden"  HorizontalContentAlignment="Center" BorderBrush="#FFD800" BorderThickness="0 0 0 0" HorizontalAlignment="Left" Foreground="#FFD800" Margin="356,547,0,0" VerticalAlignment="Top" Width="234" Background="Black" FontFamily="Lucida Fax" FontSize="20"/>
+
+        <TextBox x:Name="NoticeCreationTimeTextBox" TextAlignment="Left" Visibility="Hidden" DataContext="{Binding SelectedNotice}" MaxLength="16" IsReadOnly="True" IsHitTestVisible="False" Background="Black"  BorderThickness="0 0 0 1" Foreground="#FFF800" Margin="584,551,24,0" TextWrapping="Wrap" Text="{Binding CreationDate, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Height="26" FontFamily="Lucida Fax" FontSize="16"/>
+
+        <Label x:Name="LabelNoticeText" Content="Notice text" Visibility="Hidden" HorizontalContentAlignment="Center" BorderBrush="#FFD800" BorderThickness="0 0 0 1" HorizontalAlignment="Left" Foreground="#FFD800" Margin="482,594,0,0" VerticalAlignment="Top" Width="244" Background="Black" FontFamily="Lucida Fax" FontSize="20"/>
+
+        <TextBox  x:Name="NoticeTextTextBox" Visibility="Hidden" DataContext="{Binding SelectedNotice}" MaxLength="256" Background="Black"  BorderThickness="1 1 1 1" Foreground="#FFF800" Margin="353,639,16,0" TextWrapping="Wrap" Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Top" Height="206" FontFamily="Lucida Fax" TextChanged="NoticeTextTextBox_TextChanged"  FontSize="16"/>
+
+        <TextBox x:Name="MaxLengthCounter" Visibility="Hidden" TextAlignment="Right"  IsReadOnly="True" IsHitTestVisible="False" Background="Black"  BorderThickness="0 0 0 0" Foreground="#FFD800" Margin="668,817,20,0" TextWrapping="Wrap" Text="0/256" VerticalAlignment="Top"  Height="26" FontFamily="Lucida Fax" FontSize="16"/>
+
+        <RadioButton x:Name="RadioButtonSearchWithName" Checked="RadioButtonSearchWithName_Checked" Unchecked="RadioButtonSearchWithName_Unchecked" Foreground="#FFD800" Content="Find notice with name" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="10,105,0,0" VerticalAlignment="Top" FontFamily="Lucida Fax" FontSize="18"/>
+        <RadioButton x:Name="RadioButtonSearchWithCreationDate" Checked="RadioButtonSearchWithCreationDate_Checked" Unchecked="RadioButtonSearchWithCreationDate_Unchecked" Foreground="#FFD800" Content="Find notice with creation date" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="534,105,0,0" VerticalAlignment="Top" FontFamily="Lucida Fax" FontSize="18"/>
+        <RadioButton x:Name="RadioButtonSearchWithText" Checked="RadioButtonSearchWithText_Checked" Unchecked="RadioButtonSearchWithText_Unchecked" Foreground="#FFD800" Content="Find notice with text" VerticalContentAlignment="Center" HorizontalAlignment="Left" Margin="319,183,0,0" VerticalAlignment="Top" FontFamily="Lucida Fax" FontSize="18"/>
+
+        <Label x:Name="LabelEnterNoticeName" Content="Notice name :" Visibility="Hidden" HorizontalContentAlignment="Center" BorderBrush="#FFD800" BorderThickness="0 0 0 0" HorizontalAlignment="Left" Foreground="#FFD800" Margin="57,139,0,0" VerticalAlignment="Top" Width="136" Background="Black" FontFamily="Lucida Fax" FontSize="16" Height="29"/>
+        <TextBox x:Name="NoticeEnterNameTextBox" Visibility="Hidden" TextChanged="NoticeEnterNameTextBox_TextChanged"  MaxLength="16" Background="Black" BorderThickness="0 0 0 1" Foreground="#FFF800" Margin="28,173,632,0" TextWrapping="Wrap" Text="" TextAlignment="Center" VerticalAlignment="Top" Height="26" FontFamily="Lucida Fax" FontSize="14"/>
+
+        <Label x:Name="LabelEnterCreationDate" Content="Notice creation date :" Visibility="Hidden"  HorizontalContentAlignment="Center" BorderBrush="#FFD800" BorderThickness="0 0 0 0" HorizontalAlignment="Left" Foreground="#FFD800" Margin="605,139,0,0" VerticalAlignment="Top" Width="192" Background="Black" FontFamily="Lucida Fax" FontSize="16" Height="29"/>
+        <TextBox x:Name="NoticeEnterCreationDateTextBox" Visibility="Hidden" TextChanged="NoticeEnterCreationDateTextBox_TextChanged"  MaxLength="25" Background="Black" BorderThickness="0 0 0 1" Foreground="#FFF800" Margin="600,173,56,0" TextWrapping="Wrap" Text="" TextAlignment="Center" VerticalAlignment="Top" Height="26" FontFamily="Lucida Fax" FontSize="14"/>
+
+        <Label x:Name="LabelEnterText" Content="Notice text :" Visibility="Hidden"  HorizontalContentAlignment="Center" BorderBrush="#FFD800" BorderThickness="0 0 0 0" HorizontalAlignment="Left" Foreground="#FFD800" Margin="334,208,0,0" VerticalAlignment="Top" Width="192" Background="Black" FontFamily="Lucida Fax" FontSize="16" Height="29"/>
+        <TextBox  x:Name="NoticeEnterTextTextBox" MaxLength="256" Background="Black" Visibility="Hidden" BorderThickness="1 1 1 1" Foreground="#FFF800" Margin="200,242,206,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="174" FontFamily="Lucida Fax" TextChanged="NoticeEnterTextTextBox_TextChanged"  FontSize="16"/>
+        <TextBox x:Name="MaxLengthCounterForEnterText"  TextAlignment="Right" Visibility="Hidden" IsReadOnly="True" IsHitTestVisible="False" Background="Black"  BorderThickness="0 0 0 0" Foreground="#FFD800" Margin="553,394,208,0" TextWrapping="Wrap" Text="0/256" VerticalAlignment="Top"  Height="18" FontFamily="Lucida Fax" FontSize="16"/>
+
+    </Grid>
+</Window>
